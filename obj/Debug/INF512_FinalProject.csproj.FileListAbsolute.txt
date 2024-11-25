@@ -17,3 +17,13 @@ C:\Users\nicop\OneDrive\Escritorio\INF512_FinalProjectt\obj\Debug\INF512_FinalPr
 C:\Users\nicop\OneDrive\Escritorio\INF512_FinalProjectt\obj\Debug\INF512_FinalProject.csproj.CoreCompileInputs.cache
 C:\Users\nicop\OneDrive\Escritorio\INF512_FinalProjectt\obj\Debug\INF512_FinalProject.exe
 C:\Users\nicop\OneDrive\Escritorio\INF512_FinalProjectt\obj\Debug\INF512_FinalProject.pdb
+C:\Users\nicop\OneDrive\Escritorio\project\obj\Debug\INF512_FinalProject.csproj.AssemblyReference.cache
+C:\Users\nicop\OneDrive\Escritorio\project\obj\Debug\INF512_FinalProject.MainForm.resources
+C:\Users\nicop\OneDrive\Escritorio\project\obj\Debug\INF512_FinalProject.Properties.Resources.resources
+C:\Users\nicop\OneDrive\Escritorio\project\obj\Debug\INF512_FinalProject.csproj.GenerateResource.cache
+C:\Users\nicop\OneDrive\Escritorio\project\obj\Debug\INF512_FinalProject.csproj.CoreCompileInputs.cache
+C:\Users\nicop\OneDrive\Escritorio\project\obj\Debug\INF512_FinalProject.exe
+C:\Users\nicop\OneDrive\Escritorio\project\obj\Debug\INF512_FinalProject.pdb
+C:\Users\nicop\OneDrive\Escritorio\project\bin\Debug\INF512_FinalProject.exe.config
+C:\Users\nicop\OneDrive\Escritorio\project\bin\Debug\INF512_FinalProject.exe
+C:\Users\nicop\OneDrive\Escritorio\project\bin\Debug\INF512_FinalProject.pdb

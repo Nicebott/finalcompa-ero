@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
 using System.Linq;
 
@@ -13,7 +13,30 @@ namespace INF512_FinalProject
             InitializeComponent();
             repositorio = new RepositorioEstudiantes();
             ConfigurarDataGridView();
+            ConfigurarCamposNumericos();
             CargarEstudiantes();
+        }
+
+        private void ConfigurarCamposNumericos()
+        {
+            // Configurar validación para campos numéricos
+            TextBox[] camposNumericos = { practica1, practica2, practica3, examen1, examen2, examen3 };
+            foreach (var campo in camposNumericos)
+            {
+                campo.Text = "0";
+                campo.KeyPress += (s, e) =>
+                {
+                    if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && e.KeyChar != '.')
+                    {
+                        e.Handled = true;
+                    }
+
+                    if (e.KeyChar == '.' && (s as TextBox).Text.IndexOf('.') > -1)
+                    {
+                        e.Handled = true;
+                    }
+                };
+            }
         }
 
         private void ConfigurarDataGridView()
@@ -21,54 +44,84 @@ namespace INF512_FinalProject
             dataGridView1.AutoGenerateColumns = false;
             dataGridView1.Columns.Clear();
 
-            
             dataGridView1.Columns.Add(new DataGridViewTextBoxColumn
             {
                 Name = "Matricula",
                 HeaderText = "Matrícula",
-                DataPropertyName = "Matricula"
+                DataPropertyName = "Matricula",
+                Width = 100
             });
 
             dataGridView1.Columns.Add(new DataGridViewTextBoxColumn
             {
                 Name = "Nombre",
                 HeaderText = "Nombre",
-                DataPropertyName = "Nombre"
+                DataPropertyName = "Nombre",
+                Width = 200
+            });
+
+            dataGridView1.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "Practica1",
+                HeaderText = "Práctica 1",
+                DataPropertyName = "Practica1",
+                Width = 80
+            });
+
+            dataGridView1.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "Practica2",
+                HeaderText = "Práctica 2",
+                DataPropertyName = "Practica2",
+                Width = 80
+            });
+
+            dataGridView1.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "Practica3",
+                HeaderText = "Práctica 3",
+                DataPropertyName = "Practica3",
+                Width = 80
+            });
+
+            dataGridView1.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "Examen1",
+                HeaderText = "Examen 1",
+                DataPropertyName = "Examen1",
+                Width = 80
+            });
+
+            dataGridView1.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "Examen2",
+                HeaderText = "Examen 2",
+                DataPropertyName = "Examen2",
+                Width = 80
+            });
+
+            dataGridView1.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "Examen3",
+                HeaderText = "Examen 3",
+                DataPropertyName = "Examen3",
+                Width = 80
             });
 
             dataGridView1.Columns.Add(new DataGridViewTextBoxColumn
             {
                 Name = "NotaFinal",
                 HeaderText = "Nota Final",
-                DataPropertyName = "NotaFinal"
-            });
-
-            dataGridView1.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "Practica",
-                HeaderText = "Práctica",
-                DataPropertyName = "Practica"
-            });
-
-            dataGridView1.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "Cuaderno",
-                HeaderText = "Cuaderno",
-                DataPropertyName = "Cuaderno"
-            });
-
-            dataGridView1.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "Asistencia",
-                HeaderText = "Asistencia",
-                DataPropertyName = "Asistencia"
+                DataPropertyName = "CalificacionFinal",
+                Width = 80
             });
 
             dataGridView1.Columns.Add(new DataGridViewTextBoxColumn
             {
                 Name = "Estatus",
                 HeaderText = "Estatus",
-                DataPropertyName = "Estatus"
+                DataPropertyName = "Estatus",
+                Width = 100
             });
         }
 
@@ -84,10 +137,13 @@ namespace INF512_FinalProject
                     dataGridView1.Rows.Add(
                         estudiante.Matricula,
                         estudiante.Nombre,
+                        estudiante.Practicas[0],
+                        estudiante.Practicas[1],
+                        estudiante.Practicas[2],
+                        estudiante.Examenes[0],
+                        estudiante.Examenes[1],
+                        estudiante.Examenes[2],
                         estudiante.CalificacionFinal,
-                        estudiante.Practicas?.FirstOrDefault() ?? 0,
-                        estudiante.Examenes?.FirstOrDefault() ?? 0,
-                        estudiante.Examenes?.LastOrDefault() ?? 0,
                         estudiante.Estatus
                     );
                 }
@@ -114,13 +170,17 @@ namespace INF512_FinalProject
                 {
                     Matricula = Matricula.Text,
                     Nombre = Nombre.Text,
-                    Examenes = new double[] {
-                        double.Parse(textBox1.Text), 
-                        double.Parse(Asistencia.Text) 
+                    Practicas = new[]
+                    {
+                        double.Parse(practica1.Text),
+                        double.Parse(practica2.Text),
+                        double.Parse(practica3.Text)
                     },
-                    Practicas = new double[] {
-                        double.Parse(Practica.Text),
-                        double.Parse(Nota1.Text)
+                    Examenes = new[]
+                    {
+                        double.Parse(examen1.Text),
+                        double.Parse(examen2.Text),
+                        double.Parse(examen3.Text)
                     }
                 };
 
@@ -147,8 +207,17 @@ namespace INF512_FinalProject
                 if (MessageBox.Show("¿Está seguro de eliminar este estudiante?", "Confirmar",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    
-                    CargarEstudiantes();
+                    try
+                    {
+                        repositorio.EliminarEstudiante(matricula);
+                        CargarEstudiantes();
+                        LimpiarCampos();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error al eliminar estudiante: {ex.Message}", "Error",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
         }
@@ -158,12 +227,14 @@ namespace INF512_FinalProject
             if (dataGridView1.SelectedRows.Count > 0)
             {
                 var row = dataGridView1.SelectedRows[0];
-                Matricula.Text = row.Cells["Matricula"].Value.ToString();
-                Nombre.Text = row.Cells["Nombre"].Value.ToString();
-                Nota1.Text = row.Cells["NotaFinal"].Value.ToString();
-                Practica.Text = row.Cells["Practica"].Value.ToString();
-                textBox1.Text = row.Cells["Cuaderno"].Value.ToString();
-                Asistencia.Text = row.Cells["Asistencia"].Value.ToString();
+                Matricula.Text = row.Cells["Matricula"].Value?.ToString() ?? string.Empty;
+                Nombre.Text = row.Cells["Nombre"].Value?.ToString() ?? string.Empty;
+                practica1.Text = row.Cells["Practica1"].Value?.ToString() ?? "0";
+                practica2.Text = row.Cells["Practica2"].Value?.ToString() ?? "0";
+                practica3.Text = row.Cells["Practica3"].Value?.ToString() ?? "0";
+                examen1.Text = row.Cells["Examen1"].Value?.ToString() ?? "0";
+                examen2.Text = row.Cells["Examen2"].Value?.ToString() ?? "0";
+                examen3.Text = row.Cells["Examen3"].Value?.ToString() ?? "0";
             }
         }
 
@@ -171,10 +242,12 @@ namespace INF512_FinalProject
         {
             Matricula.Clear();
             Nombre.Clear();
-            Nota1.Clear();
-            Practica.Clear();
-            textBox1.Clear();
-            Asistencia.Clear();
+            practica1.Text = "0";
+            practica2.Text = "0";
+            practica3.Text = "0";
+            examen1.Text = "0";
+            examen2.Text = "0";
+            examen3.Text = "0";
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -182,12 +255,14 @@ namespace INF512_FinalProject
             if (e.RowIndex >= 0)
             {
                 var row = dataGridView1.Rows[e.RowIndex];
-                Matricula.Text = row.Cells["Matricula"].Value?.ToString();
-                Nombre.Text = row.Cells["Nombre"].Value?.ToString();
-                Nota1.Text = row.Cells["NotaFinal"].Value?.ToString();
-                Practica.Text = row.Cells["Practica"].Value?.ToString();
-                textBox1.Text = row.Cells["Cuaderno"].Value?.ToString();
-                Asistencia.Text = row.Cells["Asistencia"].Value?.ToString();
+                Matricula.Text = row.Cells["Matricula"].Value?.ToString() ?? string.Empty;
+                Nombre.Text = row.Cells["Nombre"].Value?.ToString() ?? string.Empty;
+                practica1.Text = row.Cells["Practica1"].Value?.ToString() ?? "0";
+                practica2.Text = row.Cells["Practica2"].Value?.ToString() ?? "0";
+                practica3.Text = row.Cells["Practica3"].Value?.ToString() ?? "0";
+                examen1.Text = row.Cells["Examen1"].Value?.ToString() ?? "0";
+                examen2.Text = row.Cells["Examen2"].Value?.ToString() ?? "0";
+                examen3.Text = row.Cells["Examen3"].Value?.ToString() ?? "0";
             }
         }
     }
